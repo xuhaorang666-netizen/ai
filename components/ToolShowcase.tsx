@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Command, Keyboard, Zap, FileCode2, MessagesSquare, Terminal } from 'lucide-react';
 
 const ToolSlides: React.FC = () => {
@@ -16,7 +17,7 @@ const ToolSlides: React.FC = () => {
                 <FileCode2 className="w-4 h-4" />
                 IDE Fork (VS Code)
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white">Cursor</h2>
+              <Link to="/demo/cursor" className="text-4xl md:text-5xl font-bold text-white hover:text-blue-400 transition-colors cursor-pointer">Cursor</Link>
               <p className="text-xl text-slate-400 leading-relaxed">
                 目前的行业标杆。通过 Fork VS Code 实现了最深度的 AI 集成。它的核心杀手锏是不仅能“写”代码，还能“改”整个项目。
               </p>
@@ -114,7 +115,7 @@ const ToolSlides: React.FC = () => {
                 <Zap className="w-4 h-4" />
                 Adaptive IDE (ByteDance)
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white">Trae</h2>
+              <Link to="/demo/trae" className="text-4xl md:text-5xl font-bold text-white hover:text-purple-400 transition-colors cursor-pointer">Trae</Link>
               <p className="text-xl text-slate-400 leading-relaxed">
                 字节跳动的诚意之作。主打“快”和“懂中文”。它的上下文管理非常智能，能自动感知你正在工作的相关文件，减少手动 @ 的麻烦。
               </p>
@@ -190,7 +191,7 @@ const ToolSlides: React.FC = () => {
                 <Terminal className="w-4 h-4" />
                 CLI Agent (Anthropic)
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Claude Code</h2>
+              <Link to="/demo/claude-code" className="text-4xl md:text-5xl font-bold text-white hover:text-orange-400 transition-colors cursor-pointer">Claude Code</Link>
               <p className="text-xl text-slate-400">
                 真正的 Agent 形态。它没有 UI，活在终端里。
                 你只需要给它下达模糊的任务，它会自动搜索文件、运行测试、修复 Bug，直到任务完成。

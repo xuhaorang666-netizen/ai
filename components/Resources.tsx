@@ -22,12 +22,12 @@ const Resources: React.FC = () => {
                <h3 className="text-2xl font-bold text-white mb-2">Cursor</h3>
                <p className="text-slate-400 text-sm mb-6">适合绝大多数开发者的首选</p>
                <div className="space-y-3 w-full">
-                 <button className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                 <a href="https://www.cursor.com/downloads" target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                     <Download className="w-4 h-4" /> 下载 Mac/Win 版
-                 </button>
-                 <button className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                 </a>
+                 <a href="https://docs.cursor.com" target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                     <BookOpen className="w-4 h-4" /> 官方文档
-                 </button>
+                 </a>
                </div>
             </div>
 
@@ -36,12 +36,12 @@ const Resources: React.FC = () => {
                <h3 className="text-2xl font-bold text-white mb-2">Trae</h3>
                <p className="text-slate-400 text-sm mb-6">字节跳动出品，完全免费（目前）</p>
                <div className="space-y-3 w-full">
-                 <button className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                 <a href="https://www.trae.ai/download" target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                     <Download className="w-4 h-4" /> 下载 IDE
-                 </button>
-                 <button className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                 </a>
+                 <a href="https://www.trae.ai" target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                     <ExternalLink className="w-4 h-4" /> 访问官网
-                 </button>
+                 </a>
                </div>
             </div>
 
@@ -53,10 +53,53 @@ const Resources: React.FC = () => {
                  <div className="p-3 bg-black rounded border border-slate-800 font-mono text-xs text-green-400 mb-2">
                     npm install -g @anthropic-ai/claude-code
                  </div>
-                 <button className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                 <a href="https://foxcode.rjj.cc/api-keys" target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                     <BookOpen className="w-4 h-4" /> 查看 Readme
-                 </button>
+                 </a>
                </div>
+            </div>
+          </div>
+
+          {/* 定价模块 */}
+          <div className="mt-16 pt-12 border-t border-slate-700">
+            <h3 className="text-2xl font-bold text-white text-center mb-8">定价对比</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="py-4 px-4 text-slate-400 font-medium">工具</th>
+                    <th className="py-4 px-4 text-slate-400 font-medium">免费版</th>
+                    <th className="py-4 px-4 text-slate-400 font-medium">付费版</th>
+                    <th className="py-4 px-4 text-slate-400 font-medium">备注</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-slate-800">
+                    <td className="py-4 px-4 text-blue-400 font-semibold">Cursor</td>
+                    <td className="py-4 px-4 text-white">有限制</td>
+                    <td className="py-4 px-4 text-white">1RMB=1$</td>
+                    <td className="py-4 px-4 text-slate-400">Pro 版无限制</td>
+                  </tr>
+                  <tr className="border-b border-slate-800 bg-purple-500/10">
+                    <td className="py-4 px-4 text-purple-400 font-semibold">Trae</td>
+                    <td className="py-4 px-4 text-green-400">免费体验国产大模型</td>
+                    <td className="py-4 px-4 text-white">-</td>
+                    <td className="py-4 px-4 text-slate-400">目前无付费版</td>
+                  </tr>
+                   <tr className="border-b border-slate-800 bg-purple-500/10">
+                    <td className="py-4 px-4 text-purple-400 font-semibold">Trae国际版</td>
+                    <td className="py-4 px-4 text-green-400">免费体验gemini</td>
+                    <td className="py-4 px-4 text-white">3$</td>
+                    <td className="py-4 px-4 text-slate-400">--</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-4 text-orange-400 font-semibold">Claude Code</td>
+                    <td className="py-4 px-4 text-white">--</td>
+                    <td className="py-4 px-4 text-white">按量付费</td>
+                    <td className="py-4 px-4 text-slate-400">第三方API 约5RMB/天</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
