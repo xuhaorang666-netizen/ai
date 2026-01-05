@@ -11,13 +11,19 @@ const toolInfo: Record<string, { name: string; color: string }> = {
 const ToolDemo: React.FC = () => {
   const { tool } = useParams<{ tool: string }>();
   const info = toolInfo[tool || ''] || { name: 'Unknown', color: 'gray' };
+  
+  // 根据工具名称确定返回的锚点位置
+  const getBackLink = () => {
+    if (tool === 'claude-code') return '/#claudecode';
+    return `/#${tool}`;
+  };
 
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col">
       {/* 顶部导航 */}
       <div className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm flex-shrink-0">
         <div className="px-6 py-3 flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+          <Link to={getBackLink()} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span>返回首页</span>
           </Link>

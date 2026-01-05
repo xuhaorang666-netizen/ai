@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mx-auto">
             <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-            内部技术分享会 2024
+            内部技术分享会 2026
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold leading-tight text-white tracking-tight">

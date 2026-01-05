@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { sendMessageToMiMo } from '../services/mimoService';
+import { sendMessageToMiMoStream } from '../services/mimoService';
 import { ChatMessage } from '../types';
-import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, ChevronDown, ChevronUp, Brain } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const suggestions = [
@@ -11,12 +11,19 @@ const suggestions = [
   "初学者应该先学哪个工具？"
 ];
 
+interface ExtendedChatMessage extends ChatMessage {
+  reasoning?: string;
+}
+
 const AiAssistant: React.FC = () => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ExtendedChatMessage[]>([
     { role: 'model', text: '你好！我是本次峰会的 AI 助手。关于 **Cursor**、**Trae** 或 **Claude Code**，你有什么想了解的吗？' }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentReasoning, setCurrentReasoning] = useState('');
+  const [currentContent, setCurrentContent] = useState('');
+  const [expandedReasoning, setExpandedReasoning] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const hasInteracted = useRef(false);
@@ -29,21 +36,48 @@ const AiAssistant: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, currentContent, currentReasoning]);
 
   const handleSend = async (text: string = input) => {
     if (!text.trim() || isLoading) return;
     hasInteracted.current = true;
 
-    const userMessage: ChatMessage = { role: 'user', text: text };
+    const userMessage: ExtendedChatMessage = { role: 'user', text: text };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setCurrentReasoning('');
+    setCurrentContent('');
 
-    const responseText = await sendMessageToMiMo(text);
+    let reasoning = '';
+    let content = '';
 
-    setMessages(prev => [...prev, { role: 'model', text: responseText }]);
-    setIsLoading(false);
+    await sendMessageToMiMoStream(text, {
+      onReasoning: (chunk) => {
+        reasoning += chunk;
+        setCurrentReasoning(reasoning);
+      },
+      onContent: (chunk) => {
+        content += chunk;
+        setCurrentContent(content);
+      },
+      onDone: () => {
+        setMessages(prev => [...prev, { 
+          role: 'model', 
+          text: content || '思考完成，但未生成回复。',
+          reasoning: reasoning || undefined
+        }]);
+        setCurrentReasoning('');
+        setCurrentContent('');
+        setIsLoading(false);
+      },
+      onError: (error) => {
+        setMessages(prev => [...prev, { role: 'model', text: error }]);
+        setCurrentReasoning('');
+        setCurrentContent('');
+        setIsLoading(false);
+      }
+    });
   };
 
   return (
@@ -80,27 +114,78 @@ const AiAssistant: React.FC = () => {
                     {msg.role === 'user' ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-green-400" />}
                   </div>
                   
-                  <div className={`max-w-[80%] p-4 rounded-2xl ${
+                  <div className={`max-w-[80%] ${
                     msg.role === 'user' 
-                      ? 'bg-indigo-600 text-white rounded-tr-none' 
-                      : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                      ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-none p-4' 
+                      : ''
                   }`}>
-                    <div className="prose prose-invert prose-sm max-w-none">
-                      <ReactMarkdown>{msg.text}</ReactMarkdown>
-                    </div>
+                    {/* 思考过程折叠区域 */}
+                    {msg.role === 'model' && msg.reasoning && (
+                      <div className="mb-2">
+                        <button
+                          onClick={() => setExpandedReasoning(expandedReasoning === idx ? null : idx)}
+                          className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                        >
+                          <Brain className="w-3 h-3" />
+                          <span>思考过程</span>
+                          {expandedReasoning === idx ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                        {expandedReasoning === idx && (
+                          <div className="mt-2 p-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-xs text-slate-400 leading-relaxed">
+                            <ReactMarkdown>{msg.reasoning}</ReactMarkdown>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* 正文内容 */}
+                    {msg.role === 'model' ? (
+                      <div className="bg-slate-800 text-slate-200 rounded-2xl rounded-tl-none border border-slate-700 p-4">
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
+              {/* 流式输出中 */}
               {isLoading && (
-                 <div className="flex gap-4">
-                   <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
-                     <Bot className="w-5 h-5 text-green-400" />
-                   </div>
-                   <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-700 flex items-center gap-2 text-slate-400">
-                     <Loader2 className="w-4 h-4 animate-spin" />
-                     正在思考最佳答案...
-                   </div>
-                 </div>
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div className="max-w-[80%]">
+                    {/* 思考过程实时显示 */}
+                    {currentReasoning && (
+                      <div className="mb-2">
+                        <div className="flex items-center gap-2 text-xs text-orange-400 mb-1">
+                          <Brain className="w-3 h-3 animate-pulse" />
+                          <span>正在思考...</span>
+                        </div>
+                        <div className="p-3 bg-slate-900/50 border border-orange-500/30 rounded-lg text-xs text-slate-400 leading-relaxed max-h-32 overflow-y-auto">
+                          <ReactMarkdown>{currentReasoning}</ReactMarkdown>
+                        </div>
+                      </div>
+                    )}
+                    {/* 内容实时显示 */}
+                    {currentContent ? (
+                      <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-700">
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown>{currentContent}</ReactMarkdown>
+                        </div>
+                      </div>
+                    ) : !currentReasoning && (
+                      <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-700 flex items-center gap-2 text-slate-400">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        正在连接...
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
               <div ref={messagesEndRef} />
             </div>
